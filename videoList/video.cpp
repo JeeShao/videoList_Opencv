@@ -22,11 +22,11 @@ Mat Video::getYCrCbFrame()			 //获取YCrCb色度空间图像
 Mat Video::readCap()				//摄像头读取图像
 {
 	if (!cap.isOpened())
-		cap.open(0);
+		cap.open(1);
 	bool ret;
 	ret = cap.read(frame);
 	if (ret)
-		flip(frame, frame, 1);
+		//flip(frame, frame, 1);
 		return frame;
 	cout << string("video.cpp:未读取到图像！");
 }
