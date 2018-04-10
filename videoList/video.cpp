@@ -1,4 +1,6 @@
 #include"video.h"
+//#include<vld.h>  //¼ì²âÄÚ´æĞ¹Â©
+
 
 Video::Video()
 {

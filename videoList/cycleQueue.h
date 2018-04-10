@@ -48,13 +48,14 @@ public:
 
 	//出队
 	T pop() /*throw(bad_exception)*/
-	{
+	{																					
 		if (isEmpty())
 		{
 			printf("队列空");
 			//throw bad_exception();
 		}
 		T tmp = m_data[m_front];
+		//m_data[m_front].clear();
 		m_front = (m_front + 1) % m_size;
 		return tmp;
 	}

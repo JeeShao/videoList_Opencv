@@ -23,10 +23,6 @@ private:
 	Mat img1;
 	Mat img2;
 	Mat frame;
-	//Mat bg1;
-	//Mat bg2;
-	//Mat bg3;
-	//Mat bg4;
 
 	int cbMean;
 	int cbMean1;
@@ -37,12 +33,9 @@ private:
 	static int rowNumber;
 	static int colNumber;
 
-
 	void blockImg1(int rowNumber, int colNumber);
 	void blockImg2(int rowNumber, int colNumber);
 	void blockImg3(int rowNumber, int colNumber);
 	void blockImg4(int rowNumber, int colNumber);
-	//void makeup();
-
 
 };

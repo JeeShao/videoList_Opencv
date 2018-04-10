@@ -1,4 +1,6 @@
 #include"decision.h"
+//#include<vld.h>  //检测内存泄漏
+
 
 
 int Decision::rowNumber = 120;                           //获取图像矩阵行数
@@ -15,9 +17,6 @@ Decision::Decision()
 	//Mat bg2 = Mat::zeros(120, 640, 16);
 	//Mat bg3 = Mat::zeros(120, 640, 16);
 	//Mat bg4 = Mat::zeros(120, 640, 16);
-
-
-	
 
 	cbMean = 0;
 	cbMean1 = 0;
@@ -89,11 +88,6 @@ void Decision::setFrame(Mat img)
 
 void Decision::blockImg1(int rowNumber,int colNumber)
 {
-	//printf("线程1……");
-	//cbMean1 = 0;
-	//int rowNumber = frame.rows/4;                           //获取图像矩阵行数
-	//int colNumber = frame.cols*frame.channels();    //三通道图像每行元素个数为列数*通道数
-
 	for (int i = 0; i < rowNumber; i++)		//rowNumber=120
 	{
 		uchar* pixelPtr = frame.ptr<uchar>(i);            //获取矩阵每行首地址指针
@@ -101,25 +95,16 @@ void Decision::blockImg1(int rowNumber,int colNumber)
 		{
 			bgImg.ptr<uchar>(i)[j] = uchar(round((4 * pixelPtr[j] + 3 * img2.ptr<uchar>(i)[j] + img1.ptr<uchar>(i)[j]) >>3 ));
 			if (j % 3 == 2)
-				//cbMean1 += bgImg.at<Vec3b>(i, j / 3)[2];
 				cbMean1 += bgImg.ptr<uchar>(i)[j];
 
 		}
+		//delete pixelPtr;
 	}
-	//cout << "row数" << rowNumber << endl;
-	//cout << "row数" << Decision::rowNumber << endl;
-
 	cbMean1 = cbMean1 / (rowNumber * bgImg.cols);
 }
 
 void Decision::blockImg2(int rowNumber, int colNumber)
 {
-	//printf("线程2……");
-
-	//cbMean2 = 0;
-	//int rowNumber = frame.rows / 4;                           //获取图像矩阵行数
-	//int colNumber = frame.cols*frame.channels();    //三通道图像每行元素个数为列数*通道数
-
 	for (int i = rowNumber; i <2*rowNumber; i++)
 	{
 		uchar* pixelPtr = frame.ptr<uchar>(i);            //获取矩阵每行首地址指针
@@ -127,9 +112,7 @@ void Decision::blockImg2(int rowNumber, int colNumber)
 		{
 			bgImg.ptr<uchar>(i)[j] = uchar(round((4 * pixelPtr[j] + 3 * img2.ptr<uchar>(i)[j] + img1.ptr<uchar>(i)[j]) >> 3));
 			if (j % 3 == 2)
-				//cbMean2 += bgImg.at<Vec3b>(i, j / 3)[2];
 				cbMean2 += bgImg.ptr<uchar>(i)[j];
-
 		}
 	}
 	cbMean2 = cbMean2 / (rowNumber * bgImg.cols);
@@ -137,12 +120,6 @@ void Decision::blockImg2(int rowNumber, int colNumber)
 
 void Decision::blockImg3(int rowNumber, int colNumber)
 {
-	//printf("线程3……");
-
-	//cbMean3 = 0;
-	//int rowNumber = frame.rows / 4;                           //获取图像矩阵行数
-	//int colNumber = frame.cols*frame.channels();    //三通道图像每行元素个数为列数*通道数
-
 	for (int i = 2* rowNumber; i < 3*rowNumber; i++)
 	{
 		uchar* pixelPtr = frame.ptr<uchar>(i);            //获取矩阵每行首地址指针
@@ -159,12 +136,6 @@ void Decision::blockImg3(int rowNumber, int colNumber)
 
 void Decision::blockImg4(int rowNumber, int colNumber)
 {
-	//printf("线程4……");
-
-	//cbMean4 = 0;
-	//int rowNumber = frame.rows / 4;                           //获取图像矩阵行数
-	//int colNumber = frame.cols*frame.channels();    //三通道图像每行元素个数为列数*通道数
-
 	for (int i = 3 * rowNumber; i <frame.rows; i++)
 	{
 		uchar* pixelPtr = frame.ptr<uchar>(i);            //获取矩阵每行首地址指针
@@ -174,31 +145,10 @@ void Decision::blockImg4(int rowNumber, int colNumber)
 			if (j % 3 == 2)
 				//cbMean4 += bgImg.at<Vec3b>(i, j / 3)[2];
 				cbMean4 += bgImg.ptr<uchar>(i)[j];
-
 		}
 	}
 	cbMean4 = cbMean4 / (rowNumber * frame.cols);
 }
-
-//void Decision::makeup()
-//{
-//	for (int i = 0; i < rowNumber/4; i++)
-//	{
-//		uchar* pixelPtr = bg1.ptr<uchar>(i);            //获取矩阵每行首地址指针
-//		for (int j = 0; j < colNumber; j++)
-//		{
-//			bgImg.ptr<uchar>(i)[j] = pixelPtr[j];
-//			if (j % 3 == 1)
-//				cbMean += bgImg.at<Vec3b>(i, j/3)[1];
-//		}
-//						
-//		
-//	}
-//	cbMean = cbMean / (bgImg.rows*bgImg.cols);
-//	return bgImg;
-//
-//
-//}
 
 Mat Decision::toBgrImg()
 {
@@ -207,8 +157,6 @@ Mat Decision::toBgrImg()
 	cbMean2 = 0;
 	cbMean3 = 0;
 	cbMean4 = 0;
-	//int rowNumber = frame.rows / 4;                           //获取图像矩阵行数
-	//int colNumber = frame.cols*frame.channels();    //三通道图像每行元素个数为列数*通道数
 	thread thread1(&Decision::blockImg1, this, rowNumber, colNumber);			
 	thread thread2(&Decision::blockImg2, this, rowNumber, colNumber);
 	thread thread3(&Decision::blockImg3, this, rowNumber, colNumber);
@@ -217,13 +165,8 @@ Mat Decision::toBgrImg()
 	thread2.join();
 	thread3.join();
 	thread4.join();
-	//printf("主线程……");
-
-
 	cbMean = round((cbMean1 + cbMean2 + cbMean3 + cbMean4) >>2 );
-
 	cout << "cbmean: " << cbMean1 << "  " << cbMean2 << "  " << cbMean3 << "  " << cbMean4 << "  Cb均值：" << cbMean << "  ";
-
 	return bgImg;
 }
 
@@ -231,7 +174,6 @@ Mat Decision::toBgrImg()
 int Decision::decision()
 {
 	int count = 0;//火花帧数
-
 	for (int i = 0; i <frame.rows; i++)
 	{
 		uchar* pixelPtr = frame.ptr<uchar>(i);            //获取矩阵每行首地址指针
@@ -245,8 +187,6 @@ int Decision::decision()
 								count++;	
 		}
 	}
-
-
 	//for (int nrows = 0; nrows<frame.rows; nrows++)
 	//	for (int ncols = 0; ncols < frame.cols; ncols++)
 	//	{

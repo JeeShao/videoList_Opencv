@@ -14,7 +14,6 @@ public:
 public:				  //³ÉÔ±º¯Êý
 	Mat getYCrCbFrame();
 	//vector<Mat>	images;
-
 private:
 	Mat readCap();
 	void releaseCap();
