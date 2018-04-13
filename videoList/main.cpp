@@ -1,15 +1,12 @@
 //#include<vld.h>  //¼ì²âÄÚ´æÐ¹Â©
-#include<iostream>
-#include<thread>
-#include<ctime>
-#include<mutex>
-#include<opencv2\opencv.hpp>
 #include"video.h"
 #include"decision.h"
 #include"cycleQueue.h"
+#include<ctime>
+#include<mutex>
 
-using namespace std;
-using namespace cv;
+//using namespace std;
+//using namespace cv;
 mutex mu;
 cycleQueue<Mat> q(100);
 
